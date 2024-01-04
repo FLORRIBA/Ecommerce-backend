@@ -7,13 +7,13 @@ const userController = require('../controllers/user.controllers');
 
 
 // Definimos ruta obtener todos los usuario GET
-router.get('/users', userController.getUsers);
+router.get('/users/:id?', userController.getUsers);
 // Agregamos un nuevo usuario POST
 router.post('/users', userController.createUser);
 // Borrar un usuario DELETE
-router.delete('/users', userController.deleteUser);
+router.delete('/users/:idUser', userController.deleteUser);
 // Actualizar un usuario PUT
-router.put('/users', userController.updateUser);
+router.put('/users/:id', userController.updateUser);
 // Obtener un usuario específico GET
 
 

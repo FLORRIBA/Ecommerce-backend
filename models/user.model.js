@@ -6,8 +6,9 @@ const Schema = mongoose.Schema;
 
 
 const userSchema = new Schema({
-    name: String,
-    email: String,
+    name:{ type: String, required:true},
+    email: {type:String, required: false},
+    
 })
 
             //collection mongoDB va a guardar el valor del modelo como 'users'
