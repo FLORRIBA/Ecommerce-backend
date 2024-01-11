@@ -5,19 +5,17 @@ const app = require('./app');//lo q exporta mi archivo app
 const port = 3000;
 // mongodb+srv://floripina209:MBbHmkxbpRrwFyrT@eit.sprurjq.mongodb.net/
 
-
 //funcion asincrona
 async function main(){
-    try{
+    try{                                                                                            //test nombre de la BD que cree en Mongoose 
         await mongoose.connect('mongodb+srv://floripina209:MBbHmkxbpRrwFyrT@eit.sprurjq.mongodb.net/test')
-        console.log('conexion a la db correcta')
+        console.log('\x1b[33m conexion a la db correcta \x1b[37m ')
     } catch(error){
     console.log(error)
 
 }
 }
 main()
-
 
 app.get('/' ,(req,res)=>{
     console.log('Endpoint llamado')
