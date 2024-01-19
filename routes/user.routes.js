@@ -11,7 +11,7 @@ const userController = require('../controllers/user.controller');
 
 // -GET Obtener todos los usuarios - un usuario específico :id? param opcional
             //ruta                  variable      funciones
-router.get('/users/:id?', jwtVerify, userController.getUsers); //si me envian usuario entra al if
+router.get('/users/:id?', userController.getUsers); //si me envian usuario entra al if
 // -POST Crear un nuevo usuario 
 router.post('/users', userController.createUser);
 //-POST Login usuario
