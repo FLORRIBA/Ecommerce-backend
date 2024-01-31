@@ -33,13 +33,12 @@ const productSchema = new Schema({
     trim: true,
   },
   fecha: {
-    type: Date,
+    type: String,
     required: false,
   },
   image: {
     type: String,
     required: false,
-    trim: true,
   },
 
 });

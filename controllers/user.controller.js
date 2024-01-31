@@ -17,7 +17,7 @@ async function getUsers(req, res) {
       const user = await User.findById(
         id,
         { password: 0 },
-        { fullname: 1, email: 1 }
+        { name: 1, email: 1 }
       ); // que no me devuelva el password y que solo me devuelva por ej nombre y el mail
 
       if (!user) {
@@ -33,7 +33,7 @@ async function getUsers(req, res) {
 
       return res.send(user); //return para que la res de abajo no se ejecute=> me va a dar error por la doble respuesta
     }
-    const users = await User.find(); //busca en colection de mi BD llamada "users"
+    const users = await User.find().select({ password: 0, __v:0 }); //busca en colection de mi BD llamada "users"
     res.send({
       // Internal Server Error
       //-Devolvemos los usuarios encontrados
@@ -78,9 +78,9 @@ async function deleteUser(req, res) {
     //-Comprobar que la persona q desea borrar es un ADMIN_ROLE
     //req.user=payload.user -isAuth
     if (req.user.role !== "ADMIN_ROLE") {
-      return res.status(401).send({
+      return res.status(403).send({   //codigo 403-Prohibido
         ok: false,
-        message: "No tienes permisos para realizar esta accion",
+        message: "No tienes permisos para borrar usuarios",
       });
     }
 
@@ -104,9 +104,16 @@ async function deleteUser(req, res) {
   }
 }
 
-//--PUT -Actualizar un Usuario
+//--PUT -Actualizar(Editar) un Usuario
 async function updateUser(req, res) {
   try {
+    if (req.user.role !== "ADMIN_ROLE"){
+        return res.status(403).send({   //codigo 403-Prohibido
+          ok: false,
+          message: "No tienes permisos para borrar usuarios",
+        });
+      
+    }
     const id = req.params.id; //id sale de la ruta!
     const nuevosValores = req.body; //body - Postman
     //Peticion async - {new: true,} me va a devolver los valores del usuario actualizado

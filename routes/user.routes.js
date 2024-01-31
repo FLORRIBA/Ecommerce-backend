@@ -18,8 +18,8 @@ router.post('/users', userController.createUser);
 router.post('/login', userController.login )
 // -DELETE Borrar un usuario  -req.params.idUser / active?no es necesario definirlo, es opcional
 router.delete('/users/:idUser', jwtVerify, userController.deleteUser);
-// -PUT Actualizar un usuario 
-router.put('/users/:id',  userController.updateUser);
+// -PUT Actualizar(Editar) un usuario 
+router.put('/users/:id',  jwtVerify,  userController.updateUser);
 
 
 

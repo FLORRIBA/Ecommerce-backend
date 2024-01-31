@@ -44,6 +44,13 @@ const userSchema = new Schema({
     maxlenght: 70,
     trim: true,
   },
+  location: {
+    type: String,
+    required: true,
+    minlenght: 4,
+    maxlenght: 70,
+    trim: true,
+  },
   age: {
     type: Number,
     required: true,
@@ -53,7 +60,6 @@ const userSchema = new Schema({
   image: {
     type: String,
     required: false,
-    trim: true,
   },
   role: {
     type: String,
@@ -63,7 +69,7 @@ const userSchema = new Schema({
   },
   bornDate: {
     type: Number,
-    required: false,
+    required:false,
   },
 });
 

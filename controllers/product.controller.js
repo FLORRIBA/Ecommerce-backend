@@ -13,11 +13,10 @@ async function getProduct(req, res) {
     const id = req.params.id; // id sale de la ruta!-si no viene va a ser undefined
     if (id) {
       //solo si viene el id
-      const product = await Product.findById(
-        id,
-        { image: 0 },
-        { producto: 1, descripcion: 1, precio:1}
-      ); 
+      const product = await Product.findById(id ); 
+        // { image: 0 },
+        // { producto: 1, descripcion: 1, precio:1}
+     
 
       if (!product) {
         //sino encontro el producto != al catch no se pudo resolver la peticion
@@ -38,10 +37,10 @@ async function getProduct(req, res) {
       //-Devolvemos los productos encontrados
       products,
       ok: true,
-      mesage: "productos obtenidos correctamente",
+      mesage: "Productos obtenidos correctamente",
     });
   } catch (error) {
-    res.status(500).send({
+      res.status(500).send({
       ok: false,
       mesage: "Error al obtener el producto",
     });
@@ -62,7 +61,7 @@ async function createProduct(req, res) {
     productSaved.password = undefined;
     res.status(201).send({
       ok: true,
-      message: "producto creado correctamente",
+      message: "Producto creado correctamente",
       product: productSaved,
     });
   } catch (error) {
@@ -76,16 +75,16 @@ async function deleteProduct(req, res) {
   try {
     //-Comprobar que la persona q desea borrar es un ADMIN_ROLE
     //req.product=payload.product -isAuth
-    if (req.product.role !== "ADMIN_ROLE") {
-      return res.status(401).send({
-        ok: false,
-        message: "No tienes permisos para realizar esta accion",
-      });
-    }
+    // if (req.product.role !== "ADMIN_ROLE") {
+    //   return res.status(401).send({
+    //     ok: false,
+    //     message: "No tienes permisos para realizar esta accion",
+    //   });
+    // }
 
-    const id = req.params.idProduct; //idProduct sale de la ruta!
+    const id = req.params.id; //idProduct sale de la ruta!
     //Peticion async              CSSMathProduct modelo collection de mongoose .findByIdAndDelete(metodo)
-    const productDeleted = await CSSMathProduct.findByIdAndDelete(id);
+    const productDeleted = await Product.findByIdAndDelete(id);
 
     if (!productDeleted) {
       return res.status(404).send({
@@ -95,12 +94,15 @@ async function deleteProduct(req, res) {
     }
     res.send({
       ok: true,
-      message: "producto borrado correctamente",
+      message: "Producto borrado correctamente",
       product: productDeleted,
     });
   } catch (error) {
-    res.send("No se pudo borrar el producto");
-  }
+    res.status(500).send({
+        ok: false,
+        message: "No se pudo borrar el product"
+});
+}
 }
 
 //--PUT -Actualizar un producto
@@ -118,65 +120,14 @@ async function updateProduct(req, res) {
       product: productUpdated,
     });
   } catch (error) {
-    res.send({
+      res.send({
       ok: false,
       message: "El producto no se pudo actualizar",
     });
   }
 }
 
-//--LOGIN
-async function login(req, res) {
-  try {
-    //Obtenemos del body email y password
-    const { password, email } = req.body;
-    if (!password || !email) {
-      return res.status(400).send({
-        ok: false,
-        message: "Faltan datos",
-      });
-    }
-    //-Buscamos el producto
-    const product = await Product.findOne({ email: email.toLowerCase() }); //busque Uno por la propiedad email donde su valor sea email
-    //-Si no existe el producto
-    if (!product) {
-      //=undefinid
-      return res.status(404).send({
-        ok: false,
-        message: "Datos incorrectos",
-      });
-    }
-    //-Si existe el producto, comparamos la contraseña-bycrypt.compare() libreria
-    //req     dataBase(hash)
-    const verifiedProduct = await bcrypt.compare(password, product?.password); //?Operador de encaden.opcional - exite user?sino existe=undefinid y no null
-    //-Si la contraseña no es correcta
-    if (!verifiedProduct) {
-      //=null - no puedo acceder a sus propiedades
-      return res.status(404).send({
-        ok: false,
-        message: "Datos incorrectos",
-      });
-    }
-    //Realizar login y devolver respuesta correcta
-    product.password = undefined; //para que no aparezca la prop
 
-    //-Generar un token(cadena de caracteres)ante de devolver la peticion para el producto de tal modo que sus datos no puedan ser manipulados
-    const token = jwt.sign({ product }, secret, { expiresIn: "1h" }); //lo devolvemos al front
-
-    res.send({
-      ok: true,
-      message: "Login correcto",
-      product,
-      token,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({
-      ok: false,
-      message: "No se pudo hacer el login",
-    });
-  }
-}
 
 //--EXPORTO  las funciones
 module.exports = {
@@ -184,5 +135,5 @@ module.exports = {
   getProduct,
   deleteProduct,
   updateProduct,
-  login,
+ 
 };
