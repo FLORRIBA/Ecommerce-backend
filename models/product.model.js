@@ -22,8 +22,8 @@ const productSchema = new Schema({
     max: 10000000,
   },
   active:{
-    type: String,
-    required:true,
+    type: Boolean,
+    default:true,
   },
   descripcion: {
     type: String,
@@ -33,17 +33,23 @@ const productSchema = new Schema({
     trim: true,
   },
   fecha: {
-    type: String,
+    type: Date,
     required: false,
+    default: Date.now,//sin los parentesis como en JS
   },
   image: {
     type: String,
     required: false,
   },
+  category:{
+    type: Schema.Types.ObjectId, //guardamos el nombre de la categoria del producto por Id
+    ref:"Category", //*referencias
+    required:true
+  },
 
 });
 
-//collection mongoDB va a guardar el valor del modelo como 'users'
-//queremos exportar un modelo basado en el esquema que definimos
 
+//queremos exportar un modelo basado en el esquema que definimos
+//collection mongoDB va a guardar el valor del modelo como 'products'
 module.exports = mongoose.model("Product", productSchema);

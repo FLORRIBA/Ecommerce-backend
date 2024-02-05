@@ -7,7 +7,7 @@ const productController = require('../controllers/product.controller');
 
 
 // Definimos ruta obtener todos los productos GET
-router.get('/products/:id?', productController.getProduct); //:parametro
+router.get('/products/:id?', productController.getProducts); //:parametro
 
 // Agregamos un nuevo producto POST
 router.post('/products', productController.createProduct);

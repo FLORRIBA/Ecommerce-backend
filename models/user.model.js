@@ -75,5 +75,4 @@ const userSchema = new Schema({
 
 //collection mongoDB va a guardar el valor del modelo como 'users'
 //queremos exportar un modelo basado en el esquema que definimos
-
 module.exports = mongoose.model("User", userSchema);

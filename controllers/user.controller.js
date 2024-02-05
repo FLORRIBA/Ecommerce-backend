@@ -29,7 +29,7 @@ async function getUsers(req, res) {
         });
       }
 
-      //   user.password=undefined //me trae trdas las prop. del usuario pero no la propiedad password
+      //   user.password=undefined //me trae todas las prop. del usuario pero no la propiedad password
 
       return res.send(user); //return para que la res de abajo no se ejecute=> me va a dar error por la doble respuesta
     }
@@ -61,7 +61,7 @@ async function createUser(req, res) {
     //-Borramos la propiedad password del objeto
     //delete userSaved.password
     userSaved.password = undefined;
-    res.status(201).send({
+    res.status(201).send({ //201 Status Created
       ok: true,
       message: "Usuario creado correctamente",
       user: userSaved,
