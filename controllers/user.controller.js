@@ -17,7 +17,7 @@ async function getUsers(req, res) {
       const user = await User.findById(
         id,
         { password: 0 },
-        { name: 1, email: 1 }
+        // { name: 1, email: 1 }
       ); // que no me devuelva el password y que solo me devuelva por ej nombre y el mail
 
       if (!user) {
@@ -33,13 +33,19 @@ async function getUsers(req, res) {
 
       return res.send(user); //return para que la res de abajo no se ejecute=> me va a dar error por la doble respuesta
     }
-    const users = await User.find().select({ password: 0, __v:0 }); //busca en colection de mi BD llamada "users"
+    const users = await User.find()
+                            .select({ password: 0, __v:0 }) //busca en colection de mi BD llamada "users"
+                            .collation({locale:'es'})
+                            .sort({name: 1})
+                            
+    const total = await User.countDocuments();//contar ctos usuarios tengo en la BD
+
+  //-Devolvemos los usuarios encontrados
     res.send({
-      // Internal Server Error
-      //-Devolvemos los usuarios encontrados
       users,
       ok: true,
       mesage: "Usuarios obtenidos correctamente",
+      total
     });
   } catch (error) {
     res.status(500).send({
@@ -51,9 +57,16 @@ async function getUsers(req, res) {
 
 //--POST -Crear Nuevo Usuario - Postman Body-raw-JSON---objeto JSON "",
 async function createUser(req, res) {
+  // console.log(req.body)
+  // console.log(req.file)
+  // return;
   try {
+ 
     //creamos una nueva instancia de un usuario a partir del modelo User que defini
     const user = new User(req.body);
+    if(req.file?.filename){
+      user.image==req.file.filename
+    }
     //-Encriptar la contraseña (libreria-bcrypt)
     user.password = bcrypt.hashSync(user.password, saltRounds);
     //-Guardamos el usuario
@@ -186,6 +199,38 @@ async function login(req, res) {
   }
 }
 
+//--Busqueda
+async function searchUser(req,res){
+  try{
+    const search=new RegExp(req.params.search, 'i');//nueva Expresion Regular a partir de la string de busqueda, 'i' que la busqueda no sea sensitiva a las may. y minus.
+    
+    const users=await User.find({ //nombre del usuario
+      $and:[ //que se cumplan las dos condiciones
+        {age:{$gte:18}}, //1ro - que sea mayor o igual que 18 
+    
+      {
+      $or:[ //que se cumpla o una o la otra-alguna de los dos
+          {name:search}, //2do-que tenga en su nombre o email el "string" del search
+          {email:search}
+        ]
+      }
+    ]
+    })
+    return res.send({
+      ok:true,
+      message:'Ususario encontrado',
+      users
+    })
+  }
+  catch (error){
+    console.log(error)
+    return res.status(500).send({
+      ok:false,
+      message:'No se encontro el usuario'
+    })
+  }
+}
+
 //--EXPORTO  las funciones
 module.exports = {
   createUser,
@@ -193,4 +238,5 @@ module.exports = {
   deleteUser,
   updateUser,
   login,
+  searchUser,
 };

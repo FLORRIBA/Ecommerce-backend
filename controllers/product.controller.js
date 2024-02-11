@@ -5,9 +5,10 @@ async function getProducts(req, res) {
   try {
     //llamo a mi modelo Product (creado con moongoose lo guardo como products)busca todo lo q haya en product
     const id = req.params.id; // id sale de la ruta!-si no viene va a ser undefined
+    //-Busco por id si lo recibo
     if (id) {
       //solo si viene el id
-      const product = await Product.findById(id).populate("category");//me traiga los datos de la categoria
+      const product = await Product.findById(id);//me traiga los datos de la categoria     
       if (!product) {
         //sino encontro el producto != al catch no se pudo resolver la peticion
         return res.status(404).send({
@@ -15,27 +16,45 @@ async function getProducts(req, res) {
           mesage: "No se encontro el producto",
         });
       }
-
       return res.send(product); //return para que la res de abajo no se ejecute=> me va a dar error por la doble respuesta
     }
-    const products = await Product.find(); //busca en colection de mi BD llamada "products"
-    res.send({
+    // -- PAGINACION hecha por el usuario de la pg con batones 
+    const limit = parseInt(req.query.limit)||0;
+    const page =  parseInt(req.query.page)||0;
+    //--f Promise.all()Llamamos a un conjunto de promesas, dispara los await a la vez (demora lo q demora la mas larga)
+    const [total, products] = await Promise.all([
+      Product.countDocuments(),
+      Product.find() //busca en colection de mi BD llamada "products"
+                                  .populate("category","producto")
+                                  .limit(limit)//cantidad de productos que quiero q me traiga...
+                                  .skip(page*limit)//cantidad de productos que va a ir salteando 
+                                  .collation({locale:'es'})
+                                  .sort({producto: 1}) //-Ordenamiento  :1 ascendente :-1 descendente * producto 
+    ])
+    return res.status(200).send({
       products,
       ok: true,
       mesage: "Productos obtenidos correctamente",
+      total
     });
   } catch (error) {
     res.status(500).send({
       ok: false,
-      mesage: "Error al obtener el producto",
+      mesage: "Error al obtener el producto"
     });
   }
 }
 //--POST -Crear Nuevo producto - Postman Body-raw-JSON---objeto JSON "",
 async function createProduct(req, res) {
+  // console.log(req.body)
+  // console.log(req.file)
+  // return;
   try {
     //creamos una nueva Instancia de un producto a partir del Modelo Product que definimos
     const product = new Product(req.body);
+    if(req.file?.filename){
+      product.image==req.file.filename
+    }
     //-Guardamos el producto
     const productSaved = await product.save(); //MongoDB Compass
     res.status(201).send({
@@ -60,7 +79,7 @@ async function deleteProduct(req, res) {
         message: "No se encontro el producto",
       });
     }
-    res.send({
+    return res.status(200).send({
       ok: true,
       message: "Producto borrado correctamente",
       product: productDeleted,
@@ -68,7 +87,7 @@ async function deleteProduct(req, res) {
   } catch (error) {
     res.status(500).send({
       ok: false,
-      message: "No se pudo borrar el product",
+      message: "No se pudo borrar el producto",
     });
   }
 }
@@ -104,10 +123,36 @@ async function updateProduct(req, res) {
   }
 }
 
+async function searchProduct(req,res){
+  try{
+    const search=new RegExp(req.params.search, 'i');//nueva Expresion Regular a partir de la string de busqueda, 'i' que la busqueda no sea sensitiva a las may. y minus.
+    
+    const products=await Product.find({ //nombre de un producto
+      $or:[
+        {producto:search},
+        {precio:search}
+      ]
+    })
+    return res.send({
+      ok:true,
+      message:'Producto encontrado',
+      products
+    })
+  }
+  catch (error){
+    console.log(error)
+    return res.status(500).send({
+      ok:false,
+      message:'No se encontro el producto'
+    })
+  }
+}
+
 //--EXPORTO  las funciones
 module.exports = {
   createProduct,
   getProducts,
   deleteProduct,
   updateProduct,
+  searchProduct,
 };

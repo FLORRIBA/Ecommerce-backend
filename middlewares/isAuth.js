@@ -1,4 +1,4 @@
-/*  --middlwares=>funciones intermedias que se ejecutan antes de llamar a un controller
+/*  --middlwares=>funciones intermedias que se ejecutan antes de llamar a un controller dentro de la route
     -router.get('/users/:id?', jwtVerify, userController.getUsers);
     --is Auth (autentification)*/
 
