@@ -4,7 +4,7 @@ const router = express.Router();
 const jwtVerify=require('../middlewares/isAuth') //para asegurar(con el token) que la persona este logueada
 // USO a traves de una variable las funciones exportadas de controllers 
 const userController = require('../controllers/user.controller');
-const uploadImage=require('../middlewares/uploadImage')
+const uploadImage=require('../middlewares/uploadUserImage')
 
 
 // Definimos rutas: 
@@ -19,7 +19,7 @@ router.post('/login', userController.login )
 // -DELETE Borrar un usuario  -req.params.idUser / active?no es necesario definirlo, es opcional
 router.delete('/users/:idUser', jwtVerify, userController.deleteUser);
 // -PUT Actualizar(Editar) un usuario 
-router.put('/users/:id',  jwtVerify,  userController.updateUser);
+router.put('/users/:id',  [jwtVerify , uploadImage],  userController.updateUser);
 
 //-Busqueda de usuario
 router.get('/users/search/:search', userController.searchUser);

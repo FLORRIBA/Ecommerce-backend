@@ -4,7 +4,7 @@ const router = express.Router();
 const jwtVerify=require('../middlewares/isAuth')
 const productController = require('../controllers/product.controller');
 const isAdmin = require('../middlewares/isAdmin');
-const uploadImage=require('../middlewares/uploadImage')
+const uploadImage=require('../middlewares/uploadProductImage') //IMAGEN guardada en el servidor..
 
 
 // Definimos ruta obtener todos los productos GET
@@ -15,7 +15,7 @@ router.post('/products', uploadImage, productController.createProduct);
 //verificamos que esta logueado - jwtVerify y es ADMIN-ROLE - isAdmin
 router.delete('/products/:id', [jwtVerify, isAdmin], productController.deleteProduct);
 // Actualizar un producto PUT
-router.put('/products/:id', productController.updateProduct);
+router.put('/products/:id',uploadImage, productController.updateProduct);
 
 //-Busqueda de productos
 router.get('/products/search/:search', productController.searchProduct);

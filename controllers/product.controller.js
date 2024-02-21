@@ -8,7 +8,7 @@ async function getProducts(req, res) {
     //-Busco por id si lo recibo
     if (id) {
       //solo si viene el id
-      const product = await Product.findById(id);//me traiga los datos de la categoria     
+      const product = await Product.findById(id); //me traiga los datos de la categoria
       if (!product) {
         //sino encontro el producto != al catch no se pudo resolver la peticion
         return res.status(404).send({
@@ -18,43 +18,45 @@ async function getProducts(req, res) {
       }
       return res.send(product); //return para que la res de abajo no se ejecute=> me va a dar error por la doble respuesta
     }
-    // -- PAGINACION hecha por el usuario de la pg con batones 
-    const limit = parseInt(req.query.limit)||0;
-    const page =  parseInt(req.query.page)||0;
+    // -- PAGINACION hecha por el usuario de la pg con batones
+    const limit = parseInt(req.query.limit) || 0;
+    const page = parseInt(req.query.page) || 0;
     //--f Promise.all()Llamamos a un conjunto de promesas, dispara los await a la vez (demora lo q demora la mas larga)
     const [total, products] = await Promise.all([
       Product.countDocuments(),
       Product.find() //busca en colection de mi BD llamada "products"
-                                  .populate("category","producto")
-                                  .limit(limit)//cantidad de productos que quiero q me traiga...
-                                  .skip(page*limit)//cantidad de productos que va a ir salteando 
-                                  .collation({locale:'es'})
-                                  .sort({producto: 1}) //-Ordenamiento  :1 ascendente :-1 descendente * producto 
-    ])
+        .populate("category")
+        .limit(limit) //cantidad de productos que quiero q me traiga...
+        .skip(page * limit) //cantidad de productos que va a ir salteando
+        .collation({ locale: "es" })
+        .sort({ producto: 1 }), //-Ordenamiento  :1 ascendente :-1 descendente * producto
+    ]);
     return res.status(200).send({
       products,
       ok: true,
       mesage: "Productos obtenidos correctamente",
-      total
+      total,
     });
   } catch (error) {
     res.status(500).send({
       ok: false,
-      mesage: "Error al obtener el producto"
+      mesage: "Error al obtener el producto",
     });
   }
 }
 //--POST -Crear Nuevo producto - Postman Body-raw-JSON---objeto JSON "",
 async function createProduct(req, res) {
-  // console.log(req.body)
-  // console.log(req.file)
+  // console.log(req.body);
+  // console.log(req.file);
   // return;
   try {
+    console.log(req.body);
     //creamos una nueva Instancia de un producto a partir del Modelo Product que definimos
     const product = new Product(req.body);
-    if(req.file?.filename){
-      product.image==req.file.filename
+    if (req.file?.filename) {
+      product.image == req.file.filename;
     }
+    console.log(product);
     //-Guardamos el producto
     const productSaved = await product.save(); //MongoDB Compass
     res.status(201).send({
@@ -93,18 +95,19 @@ async function deleteProduct(req, res) {
 }
 //--PUT -Actualizar un producto
 async function updateProduct(req, res) {
-  try { //Obtenemos el id para saber a quien actualizar
+  try {
+    //Obtenemos el id para saber a quien actualizar
     const id = req.params.id; //id sale de la ruta!
     const nuevosValores = req.body; //body - Postman
 
-    const product= await Product.findById(id); //busco por id
+    const product = await Product.findById(id); //busco por id
 
-    if(!product){
+    if (!product) {
       return res.status(404).send({
-        ok:false,
-        message:'Producto no encontrado'
-      })
-   }
+        ok: false,
+        message: "Producto no encontrado",
+      });
+    }
 
     //Peticion async - {new: true,} me va a devolver los valores del producto actualizado
     const productUpdated = await Product.findByIdAndUpdate(id, nuevosValores, {
@@ -123,28 +126,29 @@ async function updateProduct(req, res) {
   }
 }
 
-async function searchProduct(req,res){
-  try{
-    const search=new RegExp(req.params.search, 'i');//nueva Expresion Regular a partir de la string de busqueda, 'i' que la busqueda no sea sensitiva a las may. y minus.
-    
-    const products=await Product.find({ //nombre de un producto
-      $or:[
-        {producto:search},
-        {precio:search}
-      ]
-    })
+async function searchProduct(req, res) {
+  try {
+    const search = new RegExp(req.params.search, "i"); //nueva Expresion Regular a partir de la string de busqueda, 'i' que la busqueda no sea sensitiva a las may. y minus.
+
+    const products = await Product.find({
+      producto: search,
+      // precio:search,
+      //nombre de un producto
+      // $or: [{ producto: search },
+      //       { precio: search }],
+    });
+    // .populate("category");
     return res.send({
-      ok:true,
-      message:'Producto encontrado',
-      products
-    })
-  }
-  catch (error){
-    console.log(error)
+      ok: true,
+      message: "Producto encontrado",
+      products,
+    });
+  } catch (error) {
+    console.log(error);
     return res.status(500).send({
-      ok:false,
-      message:'No se encontro el producto'
-    })
+      ok: false,
+      message: "No se encontro el producto",
+    });
   }
 }
 

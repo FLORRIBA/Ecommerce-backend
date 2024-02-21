@@ -16,7 +16,7 @@ async function getUsers(req, res) {
       //solo si viene el id
       const user = await User.findById(
         id,
-        { password: 0 },
+        { password: 0 }
         // { name: 1, email: 1 }
       ); // que no me devuelva el password y que solo me devuelva por ej nombre y el mail
 
@@ -34,18 +34,18 @@ async function getUsers(req, res) {
       return res.send(user); //return para que la res de abajo no se ejecute=> me va a dar error por la doble respuesta
     }
     const users = await User.find()
-                            .select({ password: 0, __v:0 }) //busca en colection de mi BD llamada "users"
-                            .collation({locale:'es'})
-                            .sort({name: 1})
-                            
-    const total = await User.countDocuments();//contar ctos usuarios tengo en la BD
+      .select({ password: 0, __v: 0 }) //busca en colection de mi BD llamada "users"
+      .collation({ locale: "es" })
+      .sort({ name: 1 });
 
-  //-Devolvemos los usuarios encontrados
+    const total = await User.countDocuments(); //contar ctos usuarios tengo en la BD
+
+    //-Devolvemos los usuarios encontrados
     res.send({
       users,
       ok: true,
       mesage: "Usuarios obtenidos correctamente",
-      total
+      total,
     });
   } catch (error) {
     res.status(500).send({
@@ -58,15 +58,16 @@ async function getUsers(req, res) {
 //--POST -Crear Nuevo Usuario - Postman Body-raw-JSON---objeto JSON "",
 async function createUser(req, res) {
   // console.log(req.body)
-  // console.log(req.file)
+  console.log(req.file)
   // return;
   try {
- 
     //creamos una nueva instancia de un usuario a partir del modelo User que defini
     const user = new User(req.body);
-    if(req.file?.filename){
-      user.image==req.file.filename
+    
+    if (req.file?.filename) {
+      user.image == req.file.filename
     }
+
     //-Encriptar la contraseña (libreria-bcrypt)
     user.password = bcrypt.hashSync(user.password, saltRounds);
     //-Guardamos el usuario
@@ -74,7 +75,8 @@ async function createUser(req, res) {
     //-Borramos la propiedad password del objeto
     //delete userSaved.password
     userSaved.password = undefined;
-    res.status(201).send({ //201 Status Created
+    res.status(201).send({
+      //201 Status Created
       ok: true,
       message: "Usuario creado correctamente",
       user: userSaved,
@@ -91,7 +93,8 @@ async function deleteUser(req, res) {
     //-Comprobar que la persona q desea borrar es un ADMIN_ROLE
     //req.user=payload.user -isAuth
     if (req.user.role !== "ADMIN_ROLE") {
-      return res.status(403).send({   //codigo 403-Prohibido
+      return res.status(403).send({
+        //codigo 403-Prohibido
         ok: false,
         message: "No tienes permisos para borrar usuarios",
       });
@@ -120,12 +123,12 @@ async function deleteUser(req, res) {
 //--PUT -Actualizar(Editar) un Usuario
 async function updateUser(req, res) {
   try {
-    if (req.user.role !== "ADMIN_ROLE"){
-        return res.status(403).send({   //codigo 403-Prohibido
-          ok: false,
-          message: "No tienes permisos para borrar usuarios",
-        });
-      
+    if (req.user.role !== "ADMIN_ROLE") {
+      return res.status(403).send({
+        //codigo 403-Prohibido
+        ok: false,
+        message: "No tienes permisos para borrar usuarios",
+      });
     }
     const id = req.params.id; //id sale de la ruta!
     const nuevosValores = req.body; //body - Postman
@@ -200,34 +203,38 @@ async function login(req, res) {
 }
 
 //--Busqueda
-async function searchUser(req,res){
-  try{
-    const search=new RegExp(req.params.search, 'i');//nueva Expresion Regular a partir de la string de busqueda, 'i' que la busqueda no sea sensitiva a las may. y minus.
-    
-    const users=await User.find({ //nombre del usuario
-      $and:[ //que se cumplan las dos condiciones
-        {age:{$gte:18}}, //1ro - que sea mayor o igual que 18 
-    
-      {
-      $or:[ //que se cumpla o una o la otra-alguna de los dos
-          {name:search}, //2do-que tenga en su nombre o email el "string" del search
-          {email:search}
-        ]
-      }
-    ]
-    })
+async function searchUser(req, res) {
+  try {
+    const search = new RegExp(req.params.search, "i"); //nueva Expresion Regular a partir de la string de busqueda, 'i' que la busqueda no sea sensitiva a las may. y minus.
+
+    const users = await User.find({
+      $or: [{ name: search }, { email: search }],
+
+      //$and: que se cumplan las dos condiciones
+      // $and: [
+      //   { age: { $gte: 18 } }, //1ro - que sea mayor o igual que 18
+
+      //   {
+      //        //$or: que se cumpla una u otra-alguna de los dos
+      //         $or: [
+
+      //           { name: search }, //2do-que tenga en su nombre o email el "string" del search
+      //           { email: search },
+      //         ],
+      //   },
+      // ],
+    });
     return res.send({
-      ok:true,
-      message:'Ususario encontrado',
-      users
-    })
-  }
-  catch (error){
-    console.log(error)
+      ok: true,
+      message: "Ususario encontrado",
+      users,
+    });
+  } catch (error) {
+    console.log(error);
     return res.status(500).send({
-      ok:false,
-      message:'No se encontro el usuario'
-    })
+      ok: false,
+      message: "No se encontro el usuario",
+    });
   }
 }
 
