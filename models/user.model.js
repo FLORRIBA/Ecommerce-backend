@@ -8,6 +8,11 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
   //propiedades de la collection //barreras para cargar el usuario
+  // user:{
+  //   type: Schema.Types.ObjectId,
+  //   ref:'User',
+  //   required:true
+  // },
   name: {
     type: String,
     required: true,
@@ -59,19 +64,16 @@ const userSchema = new Schema({
   },
   image: {
     type: String,
-    required: false,
-    trim:true
+    required: true,
+    trim: true,
   },
   role: {
     type: String,
-    required: false,
+    required: true,
     default: "USER_ROLE",
     enum: ["USER_ROLE", "CLIENT_ROLE", "ADMIN_ROLE"],
   },
-  bornDate: {
-    type: Number,
-    required:false,
-  },
+
 });
 
 //collection mongoDB va a guardar el valor del modelo como 'users'

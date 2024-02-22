@@ -57,15 +57,13 @@ async function getUsers(req, res) {
 
 //--POST -Crear Nuevo Usuario - Postman Body-raw-JSON---objeto JSON "",
 async function createUser(req, res) {
-  // console.log(req.body)
-  console.log(req.file)
-  // return;
+
   try {
     //creamos una nueva instancia de un usuario a partir del modelo User que defini
     const user = new User(req.body);
-    
     if (req.file?.filename) {
       user.image == req.file.filename
+      console.log(user.image)
     }
 
     //-Encriptar la contraseña (libreria-bcrypt)

@@ -8,6 +8,9 @@ const Schema = mongoose.Schema;
 
 const productSchema = new Schema({
   //propiedades de la collection //barreras para cargar el usuario
+  // productId:{
+  //   type: Schema.Types.ObjectId,
+  // },
   producto: {
     type: String,
     required: true,
@@ -39,7 +42,7 @@ const productSchema = new Schema({
   },
   image: {
     type: String,
-    required: false,
+    required: true
   },
   category:{
     type: Schema.Types.ObjectId, //guardamos el nombre de la categoria del producto por Id

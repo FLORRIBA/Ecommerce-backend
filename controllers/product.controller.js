@@ -46,17 +46,14 @@ async function getProducts(req, res) {
 }
 //--POST -Crear Nuevo producto - Postman Body-raw-JSON---objeto JSON "",
 async function createProduct(req, res) {
-  // console.log(req.body);
-  // console.log(req.file);
-  // return;
   try {
-    console.log(req.body);
     //creamos una nueva Instancia de un producto a partir del Modelo Product que definimos
     const product = new Product(req.body);
     if (req.file?.filename) {
-      product.image == req.file.filename;
+      product.image = req.file.filename;
+     
     }
-    console.log(product);
+  
     //-Guardamos el producto
     const productSaved = await product.save(); //MongoDB Compass
     res.status(201).send({

@@ -17,6 +17,6 @@ const uploadMulter=multer({
 
 })
 
-const upload=uploadMulter.single('image')//que suba un archivo con el valor en el campo ("image") de la req. donde viene el archivo.
+const upload=uploadMulter.single('image')//que suba un archivo con el valor en el campo ("image") de la req.(Mongoose) donde viene el archivo.
 
 module.exports=upload;

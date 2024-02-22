@@ -5,6 +5,7 @@ const jwtVerify=require('../middlewares/isAuth') //para asegurar(con el token) q
 // USO a traves de una variable las funciones exportadas de controllers 
 const userController = require('../controllers/user.controller');
 const uploadImage=require('../middlewares/uploadUserImage')
+const isAdmin = require('../middlewares/isAdmin');
 
 
 // Definimos rutas: 
@@ -17,13 +18,16 @@ router.post('/users',uploadImage, userController.createUser);
 //-POST Login usuario
 router.post('/login', userController.login )
 // -DELETE Borrar un usuario  -req.params.idUser / active?no es necesario definirlo, es opcional
-router.delete('/users/:idUser', jwtVerify, userController.deleteUser);
+router.delete('/users/:idUser', [jwtVerify, isAdmin], userController.deleteUser);
 // -PUT Actualizar(Editar) un usuario 
 router.put('/users/:id',  [jwtVerify , uploadImage],  userController.updateUser);
+
 
 //-Busqueda de usuario
 router.get('/users/search/:search', userController.searchUser);
 
+//Login de usuario 
+router.post('/login', userController.login);
 
 // Exportamos router para poder usar rutas en app.js
 module.exports = router; 
