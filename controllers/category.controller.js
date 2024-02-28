@@ -5,7 +5,7 @@ async function getCategories(req, res) {
   try {
     const id = req.params.id; // id sale de la ruta!-si no viene va a ser undefined
     if (id) {
-
+    
     const categories = await Category.find(); //Asyncrono(salir a pedir un dato afuera)
     if (!categories) {
           
@@ -13,11 +13,14 @@ async function getCategories(req, res) {
           ok: false,
           mesage: "No se encontro categorias",
         });
+        
       }
-
+      
       return res.send(categories);
+ 
     }
-    const categories = await Category.find(); 
+    const categories = await Category.find()
+                                     .sort({ name: 1 })  
     res.send({
       categories,
       ok: true,

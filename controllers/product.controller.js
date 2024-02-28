@@ -8,7 +8,9 @@ async function getProducts(req, res) {
     //-Busco por id si lo recibo
     if (id) {
       //solo si viene el id
-      const product = await Product.findById(id); //me traiga los datos de la categoria
+      const product = await Product.findById(id) //me traiga los datos de la categoria
+                                    .populate('category');
+
       if (!product) {
         //sino encontro el producto != al catch no se pudo resolver la peticion
         return res.status(404).send({
@@ -16,7 +18,10 @@ async function getProducts(req, res) {
           mesage: "No se encontro el producto",
         });
       }
-      return res.send(product); //return para que la res de abajo no se ejecute=> me va a dar error por la doble respuesta
+      return res.send({
+        ok: true,
+        product,
+        message:'Producto encontrado'}); //return para que la res de abajo no se ejecute=> me va a dar error por la doble respuesta
     }
     // -- PAGINACION hecha por el usuario de la pg con batones
     const limit = parseInt(req.query.limit) || 0;
@@ -51,9 +56,8 @@ async function createProduct(req, res) {
     const product = new Product(req.body);
     if (req.file?.filename) {
       product.image = req.file.filename;
-     
     }
-  
+
     //-Guardamos el producto
     const productSaved = await product.save(); //MongoDB Compass
     res.status(201).send({
@@ -96,7 +100,11 @@ async function updateProduct(req, res) {
     //Obtenemos el id para saber a quien actualizar
     const id = req.params.id; //id sale de la ruta!
     const nuevosValores = req.body; //body - Postman
-
+    //------------VER SI VA ACA file de imagen----------------
+    if (req.file?.filename) {
+      nuevosValores.image = req.file.filename;
+    }
+    //---------------------------------------
     const product = await Product.findById(id); //busco por id
 
     if (!product) {

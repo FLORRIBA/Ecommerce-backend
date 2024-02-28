@@ -12,13 +12,14 @@ async function getUsers(req, res) {
   try {
     //llamo a mi modelo User (creado con moongoose lo guardo como users)busca todo lo q haya en user
     const id = req.params.id; // id sale de la ruta!-si no viene va a ser undefined
+    const user=req.body
+
+    if (req.file?.filename) {
+      user.image = req.file.filename;
+      }
     if (id) {
       //solo si viene el id
-      const user = await User.findById(
-        id,
-        { password: 0 }
-        // { name: 1, email: 1 }
-      ); // que no me devuelva el password y que solo me devuelva por ej nombre y el mail
+      const user = await User.findById(id); // { name: 1, email: 1 } ); // que no me devuelva el password y que solo me devuelva por ej nombre y el mail
 
       if (!user) {
         //sino encontro el usuario != al catch no se pudo resolver la peticion
@@ -28,8 +29,6 @@ async function getUsers(req, res) {
           mesage: "No se encontro el usuario",
         });
       }
-
-      //   user.password=undefined //me trae todas las prop. del usuario pero no la propiedad password
 
       return res.send(user); //return para que la res de abajo no se ejecute=> me va a dar error por la doble respuesta
     }
@@ -57,13 +56,13 @@ async function getUsers(req, res) {
 
 //--POST -Crear Nuevo Usuario - Postman Body-raw-JSON---objeto JSON "",
 async function createUser(req, res) {
-
   try {
     //creamos una nueva instancia de un usuario a partir del modelo User que defini
     const user = new User(req.body);
+
     if (req.file?.filename) {
-      user.image == req.file.filename
-      console.log(user.image)
+      user.image == req.file.filename;
+  
     }
 
     //-Encriptar la contraseña (libreria-bcrypt)
@@ -72,7 +71,7 @@ async function createUser(req, res) {
     const userSaved = await user.save(); //MongoDB Compass
     //-Borramos la propiedad password del objeto
     //delete userSaved.password
-    userSaved.password = undefined;
+    // userSaved.password = undefined;
     res.status(201).send({
       //201 Status Created
       ok: true,
@@ -128,8 +127,15 @@ async function updateUser(req, res) {
         message: "No tienes permisos para borrar usuarios",
       });
     }
-    const id = req.params.id; //id sale de la ruta!
+    const id = req.params.id; 
     const nuevosValores = req.body; //body - Postman
+     
+    //---------VER SI VA ACA-----------
+    if (req.file?.filename) {
+      nuevosValores.image = req.file.filename;
+     
+    }
+
     //Peticion async - {new: true,} me va a devolver los valores del usuario actualizado
     const userUpdated = await User.findByIdAndUpdate(id, nuevosValores, {
       new: true,
@@ -180,7 +186,7 @@ async function login(req, res) {
       });
     }
     //Realizar login y devolver respuesta correcta
-    user.password = undefined; //para que no aparezca la prop
+    // user.password = undefined; //para que no aparezca la prop
 
     //-Generar un token(cadena de caracteres)ante de devolver la peticion para el usuario de tal modo que sus datos no puedan ser manipulados
     const token = jwt.sign({ user }, secret, { expiresIn: "1h" }); //lo devolvemos al front

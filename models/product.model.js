@@ -8,15 +8,13 @@ const Schema = mongoose.Schema;
 
 const productSchema = new Schema({
   //propiedades de la collection //barreras para cargar el usuario
-  // productId:{
-  //   type: Schema.Types.ObjectId,
-  // },
+
   producto: {
     type: String,
     required: true,
     minlength: 4,
     maxlenght: 60,
-    trim: true,    
+    trim: true,
   },
   precio: {
     type: Number,
@@ -24,9 +22,9 @@ const productSchema = new Schema({
     min: 1,
     max: 10000000,
   },
-  active:{
+  active: {
     type: Boolean,
-    default:true,
+    default: true,
   },
   descripcion: {
     type: String,
@@ -38,20 +36,18 @@ const productSchema = new Schema({
   fecha: {
     type: Date,
     required: false,
-    default: Date.now,//sin los parentesis como en JS
+    default: Date.now, //sin los parentesis como en JS
   },
   image: {
     type: String,
-    required: true
+    required: true,
   },
-  category:{
+  category: {
     type: Schema.Types.ObjectId, //guardamos el nombre de la categoria del producto por Id
-    ref:"Category", //*referencias
-    required:true
+    ref: "Category", //*referencias
+    required: true,
   },
-
 });
-
 
 //queremos exportar un modelo basado en el esquema que definimos
 //collection mongoDB va a guardar el valor del modelo como 'products'

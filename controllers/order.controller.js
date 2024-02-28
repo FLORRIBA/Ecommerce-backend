@@ -2,10 +2,10 @@ const Order = require("../models/order.model");
 
 async function createOrder(req, res) {
   try {
-    const order = new Order(req, body);
+    const order = new Order(req.body);
     const orderDB = await order.save();
-
-    return res.status(200).send({
+    //201-algo se a creado--
+    return res.status(201).send({
       ok: true,
       message: "Orden creada correctamente",
       order: orderDB,
@@ -22,12 +22,25 @@ async function createOrder(req, res) {
 async function getOrders(req, res) {
   try {
     //si es ADMIN q me traiga todas las ordenes
-    if (req.user.role === "ADMIN_ROLE") {
+    if (req.user?.role === "ADMIN_ROLE") {
       const orders = await Order.find()
-        .populate("user")
+        .populate("userId", "name email") //modelo coleccion de usuarios
         .populate("products.producId"); //dentro del array products que me traiga el ID
+
+      return req.status(200).send({
+        ok: true,
+        orders,
+      });
     }
-  } catch (error) {
+    //sino un usuario cualquiera se loguea q traiga "sus ordenes "
+    const orders = await Order.find({ userId:req.user._id})
+                                .populate("products.producId")
+
+    return req.status(200).send({
+       ok: true,
+       orders,
+      });
+   }catch(error) {
     console.log(error);
     return res.status(500).send({
       ok: false,
