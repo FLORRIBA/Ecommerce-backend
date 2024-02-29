@@ -12,11 +12,11 @@ async function getUsers(req, res) {
   try {
     //llamo a mi modelo User (creado con moongoose lo guardo como users)busca todo lo q haya en user
     const id = req.params.id; // id sale de la ruta!-si no viene va a ser undefined
-    const user=req.body
+    const user = req.body;
 
     if (req.file?.filename) {
       user.image = req.file.filename;
-      }
+    }
     if (id) {
       //solo si viene el id
       const user = await User.findById(id); // { name: 1, email: 1 } ); // que no me devuelva el password y que solo me devuelva por ej nombre y el mail
@@ -62,7 +62,6 @@ async function createUser(req, res) {
 
     if (req.file?.filename) {
       user.image == req.file.filename;
-  
     }
 
     //-Encriptar la contraseña (libreria-bcrypt)
@@ -70,7 +69,7 @@ async function createUser(req, res) {
     //-Guardamos el usuario
     const userSaved = await user.save(); //MongoDB Compass
     //-Borramos la propiedad password del objeto
-    //delete userSaved.password
+    // delete userSaved.password
     // userSaved.password = undefined;
     res.status(201).send({
       //201 Status Created
@@ -127,13 +126,12 @@ async function updateUser(req, res) {
         message: "No tienes permisos para borrar usuarios",
       });
     }
-    const id = req.params.id; 
+    const id = req.params.id;
     const nuevosValores = req.body; //body - Postman
-     
+
     //---------VER SI VA ACA-----------
     if (req.file?.filename) {
       nuevosValores.image = req.file.filename;
-     
     }
 
     //Peticion async - {new: true,} me va a devolver los valores del usuario actualizado

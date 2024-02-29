@@ -67,7 +67,9 @@ async function createProduct(req, res) {
     });
   } catch (error) {
     console.log(error);
-    res.status(500).send({});
+    res.status(500).send({
+      ok: false,
+      message: "Error al crear los productos"});
   }
 }
 //--DELETE -Borrar  producto

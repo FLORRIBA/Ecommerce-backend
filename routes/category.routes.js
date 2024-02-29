@@ -1,11 +1,11 @@
 const express=require('express')
 const router=express.Router()
-const jwtVerify=require("../middlewares/isAuth")
+const {jwtVerify}=require("../middlewares/isAuth")
 const categoryController=require("../controllers/category.controller")
 
-router.get("/categories", categoryController.getCategories);
+router.get("/categories", jwtVerify,categoryController.getCategories);
 
-router.post("/categories", categoryController.postCategory);
+router.post("/categories",jwtVerify, categoryController.postCategory);
 
 
 

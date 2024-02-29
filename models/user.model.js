@@ -54,7 +54,7 @@ const userSchema = new Schema({
   },
   image: {
     type: String,
-    required: true,
+    // required: false,
     trim: true,
   },
   age: {

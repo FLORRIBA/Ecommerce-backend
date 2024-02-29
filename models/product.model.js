@@ -40,7 +40,7 @@ const productSchema = new Schema({
   },
   image: {
     type: String,
-    required: true,
+    // required: false,
   },
   category: {
     type: Schema.Types.ObjectId, //guardamos el nombre de la categoria del producto por Id

@@ -1,3 +1,18 @@
+// function isAdmin(req, res, next){
+//    if( req.user.role !== "ADMIN_ROLE"){
+//        return res.status(403).send({
+//            ok:false,
+//            message:"No tiene permiso para realizar esta accion"
+//        })
+//    }
+//    next();
+// }
+
+
+// module.exports =  {isAdmin};
+
+
+
 //Verifiacmos que la persona esta logueada y es ADMIN-ROLE
  function isAdmin(req,res,next) {
 
@@ -13,4 +28,4 @@
   
 }
 
-module.exports = isAdmin; //common (compartir la fn)
+module.exports = {isAdmin,} 
