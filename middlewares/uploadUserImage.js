@@ -1,6 +1,6 @@
 //npm i multer -LIBRERIA-toma los archivos de un formData(formulario de datos)
 
-//IMAGENES GUARDADDAS EN EL SERVIDOR
+//-Imagenes guardadas en el servidor
 const multer=require('multer')
 
 const storage=multer.diskStorage({ //instancia de multer
@@ -8,7 +8,7 @@ const storage=multer.diskStorage({ //instancia de multer
         cb(null, 'public/images/users') //cb recibe un null(por si sucede un errror )y lo vamos a guardar en una carpeta 'public'
     },
     filename:(req,file,cb)=>{ //configuro el nombre del archivo a guardar
-                                                    //dejo solo la ext.del archivo.jpg
+        //dejo solo la ext.del archivo.jpg
         cb(null, `${Date.now() }-${file.originalname}`) //tiempo en milisegundos al momento de subirla-nombre del archivo original. extension del archivo.
     }
 })

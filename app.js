@@ -4,7 +4,7 @@ const cors = require("cors"); //LIBRERIA
 const productRoutes = require("./routes/product.routes");
 const userRoutes = require("./routes/user.routes");
 const categoryRoutes = require("./routes/category.routes");
-const orderRoutes=require("./routes/order.routes");
+const orderRoutes = require("./routes/order.routes");
 //Middlewares(aplicaciones intermedias) acciones que se ejecutan en mi servidor antes de llamara a cualquier ruta
 
 app.use(express.json()); //cuando venga un req.body poder leerlo

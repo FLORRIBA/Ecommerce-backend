@@ -3,18 +3,15 @@
 //Libreria a partir de ella creamos un modelo
 const mongoose = require("mongoose");
 
-//receta - de mongoose traemos ese esquema
 const Schema = mongoose.Schema;
 
 const productSchema = new Schema({
-  //propiedades de la collection //barreras para cargar el usuario
+  //propiedades de la collection 
 
   producto: {
     type: String,
     required: true,
     minlength: 4,
-    maxlenght: 60,
-    trim: true,
   },
   precio: {
     type: Number,
@@ -30,23 +27,24 @@ const productSchema = new Schema({
     type: String,
     required: true,
     minlength: 4,
-    maxlenght: 60,
+    maxlenght: 500,
     trim: true,
   },
   fecha: {
     type: Date,
     required: false,
-    default: Date.now, //sin los parentesis como en JS
   },
   image: {
     type: String,
-    // required: false,
+    required: false,
+    trim: true,
   },
   category: {
     type: Schema.Types.ObjectId, //guardamos el nombre de la categoria del producto por Id
     ref: "Category", //*referencias
-    required: true,
+    required: false,
   },
+  createdAt: { type: Date, default: Date.now },
 });
 
 //queremos exportar un modelo basado en el esquema que definimos

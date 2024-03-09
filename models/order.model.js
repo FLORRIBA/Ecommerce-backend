@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 
 const orderSchema = new Schema({
   //necesitamos saber de quien es la orden
-  //-userId
+ 
   userId: {
     type: Schema.Types.ObjectId,
     ref: "User",

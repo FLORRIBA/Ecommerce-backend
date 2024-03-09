@@ -4,7 +4,6 @@ async function createOrder(req, res) {
   try {
     const order = new Order(req.body);
     const orderDB = await order.save();
-    //201-algo se a creado--
     return res.status(201).send({
       ok: true,
       message: "Orden creada correctamente",
@@ -25,7 +24,7 @@ async function getOrders(req, res) {
     if (req.user?.role === "ADMIN_ROLE") {
       const orders = await Order.find()
         .populate("userId", "name email") //modelo coleccion de usuarios
-        .populate("products.producId"); //dentro del array products que me traiga el ID
+        .populate("products.producId"); //dentro del array products que traiga el ID
 
       return req.status(200).send({
         ok: true,
@@ -33,14 +32,15 @@ async function getOrders(req, res) {
       });
     }
     //sino un usuario cualquiera se loguea q traiga "sus ordenes "
-    const orders = await Order.find({ userId:req.user._id})
-                                .populate("products.producId")
+    const orders = await Order.find({ userId: req.user._id }).populate(
+      "products.producId"
+    );
 
     return req.status(200).send({
-       ok: true,
-       orders,
-      });
-   }catch(error) {
+      ok: true,
+      orders,
+    });
+  } catch (error) {
     console.log(error);
     return res.status(500).send({
       ok: false,

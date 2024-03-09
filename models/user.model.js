@@ -7,7 +7,6 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  //propiedades de la collection //barreras para cargar el usuario
 
   name: {
     type: String,
@@ -17,8 +16,8 @@ const userSchema = new Schema({
     trim: true,
     validate: {
       validator: function (name) {
-        const regex = /^[a-zA-Z\s]*$/; //-Expresion regular
-        return regex.test(name); //testeo de la Exprecion regular=>true / false
+        const regex = /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\d\s]*$/;
+        return regex.test(name);
       },
     },
   },
@@ -43,27 +42,27 @@ const userSchema = new Schema({
     required: true,
     minlenght: 4,
     maxlenght: 70,
-    trim: true,
+    // trim: true,
   },
   location: {
     type: String,
-    required: true,
+    required: false,
     minlenght: 4,
     maxlenght: 70,
     trim: true,
   },
   image: {
     type: String,
-    // required: false,
+    required: false,
     trim: true,
   },
   age: {
     type: Number,
-    required: true,
+    required: false,
     min: 12,
     max: 120,
   },
- 
+
   role: {
     type: String,
     required: true,
